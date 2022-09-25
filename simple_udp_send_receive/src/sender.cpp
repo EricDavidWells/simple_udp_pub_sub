@@ -16,6 +16,8 @@
 #include <asio.hpp>
 #include <thread>
 
+#include <simple_udp_send_receive/addressbook.pb.h>
+
 using asio::ip::udp;
 
 std::string make_daytime_string()
@@ -84,7 +86,13 @@ public:
 
     void publish_loop()
     {
-        std::array<char, 1> send_buffer;
+
+        tutorial::Person person;
+        person.set_name("eric");
+
+        std::vector<char> send_buffer (person.ByteSizeLong());
+        person.SerializeToArray(send_buffer.data(), person.ByteSizeLong());
+
         while (thread_flag_)    
         {
             socket_.send_to(asio::buffer(send_buffer), target_endpoint_);
@@ -121,11 +129,14 @@ public:
     }
 
     void handle_receive(const asio::error_code& error,
-        std::size_t /*bytes_transferred*/)
+        std::size_t nbytes)
     {
         if (!error)
         {
-            std::cout << "got message" << std::endl;
+            tutorial::Person person;
+            person.ParseFromArray(recv_buffer_.data(), nbytes);
+
+            std::cout << "person name: " << person.name() << std::endl;
         }
         else
         {
@@ -137,7 +148,7 @@ public:
 private:
     udp::socket socket_;
     udp::endpoint remote_endpoint_;
-    std::array<char, 1> recv_buffer_;
+    std::array<char, 1000> recv_buffer_;
 };
 
 int main()

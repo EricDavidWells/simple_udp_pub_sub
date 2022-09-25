@@ -1,3 +1,6 @@
 [submodule "simple_udp_send_receive\\vendor\\asio"]
 	path = simple_udp_send_receive\\vendor\\asio
 	url = https://github.com/chriskohlhoff/asio.git
+[submodule "simple_udp_send_receive/vendor\\protobuf"]
+	path = simple_udp_send_receive/vendor\\protobuf
+	url = https://github.com/protocolbuffers/protobuf.git
