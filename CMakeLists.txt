@@ -7,7 +7,7 @@ add_executable(sender
 
 target_include_directories(sender PUBLIC
 	simple_udp_send_receive/include
-	simple_udp_Send_receive/vendor/asio-1.24.0/include)
+	simple_udp_Send_receive/vendor/asio/asio/include)
 
 add_executable(receiver
 	simple_udp_send_receive/src/receiver.cpp)

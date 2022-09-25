@@ -88,7 +88,6 @@ public:
         while (thread_flag_)    
         {
             socket_.send_to(asio::buffer(send_buffer), target_endpoint_);
-            std::this_thread::sleep_for(std::chrono::seconds(1));
         }
     }
 
@@ -128,6 +127,10 @@ public:
         {
             std::cout << "got message" << std::endl;
         }
+        else
+        {
+            std::cout << "got error: " << error << std::endl;
+        }
         start_receive();
     }
 
@@ -140,27 +143,25 @@ private:
 int main()
 {
 
-    auto ip = asio::ip::address::from_string("127.0.0.1");
-    auto endpoint = udp::endpoint(ip, 65500);
-    auto recendpoint = udp::endpoint(udp::v4(), 65500);
+    std::string target_ip{ "127.0.0.1" };
+    int port = 65500;
 
+    auto ip = asio::ip::address::from_string(target_ip);
+    auto endpoint = udp::endpoint(ip, port);
+    auto recendpoint = udp::endpoint(asio::ip::address_v4::any(), port);
 
-    //try
-    //{
+    try
+    {
         asio::io_context io_context;
-
         udp_subscriber subscriber(io_context, recendpoint);
         udp_publisher publisher(io_context, endpoint);
         subscriber.start_receive();
-
-        //while (true);
         io_context.run();
-
-    //}
-    /*catch (std::exception& e)
+    }
+    catch (std::exception& e)
     {
         std::cerr << e.what() << std::endl;
-    }*/
+    }
 
     return 0;
 }
