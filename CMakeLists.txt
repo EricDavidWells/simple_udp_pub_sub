@@ -1,10 +1,11 @@
 cmake_minimum_required(VERSION 3.11)
 project(simple_udp_send_receive)
 
+set(protobuf_MODULE_COMPATIBLE ON CACHE BOOL "")
 find_package(protobuf CONFIG REQUIRED)
 
 file(GLOB ProtoFiles "${CMAKE_CURRENT_LIST_DIR}/simple_udp_send_receive/*.proto")
-PROTOBUF_GENERATE_CPP(ProtoSources ProtoHeaders ${ProtoFiles})
+# PROTOBUF_GENERATE_CPP(ProtoSources ProtoHeaders ${ProtoFiles})
 
 add_library(protobuf_msgs 
 	${ProtoSources} ${ProtoHeaders})
