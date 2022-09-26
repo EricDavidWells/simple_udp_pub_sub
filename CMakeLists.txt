@@ -1,28 +1,42 @@
 cmake_minimum_required(VERSION 3.11)
 project(simple_udp_send_receive)
 
-add_subdirectory(simple_udp_send_receive/vendor/protobuf)
+find_package(protobuf CONFIG REQUIRED)
+
+file(GLOB ProtoFiles "${CMAKE_CURRENT_LIST_DIR}/simple_udp_send_receive/*.proto")
+PROTOBUF_GENERATE_CPP(ProtoSources ProtoHeaders ${ProtoFiles})
 
 add_library(protobuf_msgs 
-	simple_udp_send_receive/generated/simple_udp_send_receive/addressbook.pb.cc)
+	${ProtoSources} ${ProtoHeaders})
 
 target_include_directories(protobuf_msgs PUBLIC
-	simple_udp_send_receive/generated/)
+	${CMAKE_BINARY_DIR})
 
-target_link_libraries(protobuf_msgs PUBLIC libprotobuf)
+target_link_libraries(protobuf_msgs PUBLIC protobuf::libprotobuf)
 
 add_executable(sender
 	simple_udp_send_receive/src/sender.cpp)
 
 target_include_directories(sender PUBLIC
 	simple_udp_send_receive/include
-	simple_udp_Send_receive/vendor/asio/asio/include)
+	simple_udp_send_receive/vendor/asio/asio/include)
 
-target_link_libraries(sender PUBLIC libprotobuf protobuf_msgs)
+target_link_libraries(sender PUBLIC protobuf::libprotobuf protobuf_msgs)
 
 add_executable(receiver
 	simple_udp_send_receive/src/receiver.cpp)
 
 target_include_directories(receiver PUBLIC
-	simple_udp_send_receive/include)
+	simple_udp_send_receive/include
+	simple_udp_send_receive/vendor/asio/asio/include)
 
+target_link_libraries(receiver PUBLIC protobuf::libprotobuf protobuf_msgs)
+
+add_executable(main
+	simple_udp_send_receive/src/main.cpp)
+
+target_include_directories(main PUBLIC
+	simple_udp_send_receive/include
+	simple_udp_send_receive/vendor/asio/asio/include)
+
+target_link_libraries(main PUBLIC protobuf::libprotobuf protobuf_msgs)
